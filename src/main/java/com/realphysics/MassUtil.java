@@ -31,7 +31,7 @@ public final class MassUtil {
         return m;
     }
 
-    private static double itemMass(ItemStack s) {
+    public static double stackMass(ItemStack s) {
         if (s.isEmpty()) return 0;
         double per;
         if (s.getItem() instanceof BlockItem) per = 0.1;
@@ -43,7 +43,7 @@ public final class MassUtil {
     /** Once per second: weigh inventory, slow the player when overloaded (Newton 2nd law: a = F/m). */
     public static void updatePlayer(ServerPlayer p) {
         double carried = 0;
-        for (ItemStack s : p.getInventory().items) carried += itemMass(s);
+        for (ItemStack s : p.getInventory().items) carried += stackMass(s);
         CARRIED.put(p.getUUID(), carried);
 
         AttributeInstance speed = p.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -57,6 +57,10 @@ public final class MassUtil {
             speed.removeModifier(LOAD_ID);
         }
     }
+
+    public static void clear(UUID id) { CARRIED.remove(id); }
+
+    public static void clearAll() { CARRIED.clear(); }
 
     private MassUtil() {}
 }
